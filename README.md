@@ -28,8 +28,8 @@ streamlit run app.py
 5. **Click on the generate button**
 
 ## 📸 Screenshots
-![image](https://github.com/piyushchugeja/email-generator/assets/66639966/80736b72-83bf-4b5b-a3e3-87e4da9e1a19)
-![image](https://github.com/piyushchugeja/email-generator/assets/66639966/258b0270-c88e-49e2-9c24-a0f5eabfd2be)
-![image](https://github.com/piyushchugeja/email-generator/assets/66639966/873db92d-0e79-477e-8372-f48825714395)
+
+<img width="1512" alt="Screenshot 2024-06-25 at 11 06 07 AM" src="https://github.com/shah48l/email-generator-main-2/assets/105571914/f7fdb4bc-3cfb-40e7-81ba-a9c38fe2b6e5">
+<img width="1512" alt="Screenshot 2024-06-25 at 11 07 54 AM" src="https://github.com/shah48l/email-generator-main-2/assets/105571914/c4ba5b3f-b77e-4c20-a10d-f2bbf881d1dd">
 
 
