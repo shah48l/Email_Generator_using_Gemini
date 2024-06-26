@@ -1,6 +1,9 @@
 from requests import get
 import streamlit as st
 import google.generativeai as genai
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Configure Gemini
 genai.configure(api_key=st.secrets['GOOGLE_API_KEY'])
@@ -8,7 +11,7 @@ genai.configure(api_key=st.secrets['GOOGLE_API_KEY'])
 # Initialise Gemini model
 gemini = genai.GenerativeModel('gemini-pro')
 
-# function to fetch email
+# Function to fetch email
 def get_email(sender, receiver, about, type, emojis, length):
     prompt = '''
     Write an email from {} to {}. The email is about {}. The email should be {} and {} characters long. {}
@@ -16,6 +19,26 @@ def get_email(sender, receiver, about, type, emojis, length):
     
     response = gemini.generate_content(prompt)
     return response.text
+
+# Function to send email using SMTP
+def send_email(sender_email, sender_password, receiver_email, subject, email_body):
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(email_body, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)  # For Gmail
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = msg.as_string()
+        server.sendmail(sender_email, receiver_email, text)
+        server.quit()
+        return "Email sent successfully!"
+    except Exception as e:
+        return str(e)
 
 # Begin with UI
 st.set_page_config(
@@ -32,7 +55,7 @@ st.write("Describe the type of email you want by filling in the following fields
 rec_col, sender_col = st.columns(2)
 
 with rec_col:
-    receiver = st.text_input("Who is the email for?")
+    receiver = st.text_input("Who is the email for? (Receiver's Email Address)")
     
 with sender_col:
     sender = st.text_input("Who is the email from?")
@@ -46,18 +69,27 @@ with email_type_col:
     email_type = st.selectbox("What type of email is it?", ["Formal", "Informal"])
 
 about = st.text_area("What is the email about?")
+use_emojis = st.checkbox("Use emojis")
 
-use_emojis = st.toggle("Use emojis")
+# Email sending fields
+st.write("Provide your email credentials to send the generated email.")
+sender_email = st.text_input("Your Email Address")
+sender_password = st.text_input("Your Email Password", type="password")
+subject = st.text_input("Email Subject")
 
-generate = st.button("Generate email")
+generate = st.button("Generate and Send Email")
 
-# Generate email
+# Generate and send email
 if generate:
     with st.spinner("Generating email..."):
         try:
-            if email_type and about and receiver and sender:
-                email = get_email(sender, receiver, about, email_type.lower(), use_emojis, length)
-                st.write(email)
+            if email_type and about and receiver and sender and sender_email and sender_password and subject:
+                email_body = get_email(sender, receiver, about, email_type.lower(), use_emojis, length)
+                st.write("Generated Email:")
+                st.write(email_body)
+                st.write("Sending email...")
+                result = send_email(sender_email, sender_password, receiver, subject, email_body)
+                st.success(result)
             else:
                 st.error("Please fill in all the fields.")
         except Exception as e:
