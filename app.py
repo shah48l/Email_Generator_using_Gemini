@@ -95,3 +95,29 @@ if generate:
         except Exception as e:
             st.error("An error occurred. Please try again later.")
             st.error(e)
+def send_email(summary, email):
+    # Email configuration
+    sender_email = "youremail@gmail.com"  # Replace with your email
+    password = "uytv werf werw sdff"  # Replace with your email password
+
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #subject = "Minutes of Meeting"  # Subject of the email
+    subject = f"Meeting Summary- {current_datetime}"
+    header = "Dear Team,\n\n"  # Header of the email
+    footer = "\n\nRegards,\nSupport Team\nClubitsSolutions\n**This mail sent by Text to Summary app**"  # Footer of the email
+    #message = summary  # Content of the email
+    message = header + summary + footer  # Content of the email
+
+    # Create a MIMEText object to represent the message
+    msg = MIMEText(message)
+
+    # Set the sender, recipient, and subject fields
+    msg['From'] = sender_email
+    msg['To'] = email
+    msg['Subject'] = subject
+
+    # Connect to the SMTP server
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()  # Secure the connection
+        server.login(sender_email, password)  # Login to the email server
+        server.sendmail(sender_email, email, msg.as_string())  # Send the email
