@@ -95,18 +95,19 @@ if generate:
         except Exception as e:
             st.error("An error occurred. Please try again later.")
             st.error(e)
-def send_email(summary, email):
-    # Email configuration
-    sender_email = "youremail@gmail.com"  # Replace with your email
-    password = "uytv werf werw sdff"  # Replace with your email password
-
+def send_email(summary, email, sender_email, password):
+    # Get the current date and time
     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #subject = "Minutes of Meeting"  # Subject of the email
-    subject = f"Meeting Summary- {current_datetime}"
-    header = "Dear Team,\n\n"  # Header of the email
-    footer = "\n\nRegards,\nSupport Team\nClubitsSolutions\n**This mail sent by Text to Summary app**"  # Footer of the email
-    #message = summary  # Content of the email
-    message = header + summary + footer  # Content of the email
+    
+    # Email subject
+    subject = f"Meeting Summary - {current_datetime}"
+    
+    # Email header and footer
+    header = "Dear Team,\n\n"
+    footer = "\n\nRegards,\nSupport Team\nClubitsSolutions\n**This mail sent by Text to Summary app**"
+    
+    # Complete message
+    message = header + summary + footer
 
     # Create a MIMEText object to represent the message
     msg = MIMEText(message)
@@ -116,8 +117,20 @@ def send_email(summary, email):
     msg['To'] = email
     msg['Subject'] = subject
 
-    # Connect to the SMTP server
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        server.starttls()  # Secure the connection
-        server.login(sender_email, password)  # Login to the email server
-        server.sendmail(sender_email, email, msg.as_string())  # Send the email
+    # Connect to the SMTP server and send the email
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()  # Secure the connection
+            server.login(sender_email, password)  # Login to the email server
+            server.sendmail(sender_email, email, msg.as_string())  # Send the email
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+# Example usage
+summary = "This is a summary of the meeting."
+email = "recipient@example.com"  # Replace with recipient's email
+sender_email = input("Enter your email: ")  # Prompt the user for their email
+password = input("Enter your email password: ")  # Prompt the user for their email password
+
+send_email(summary, email, sender_email, password)
